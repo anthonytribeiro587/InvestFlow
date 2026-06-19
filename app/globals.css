@@ -741,3 +741,22 @@ textarea {
   cursor: pointer;
   font-weight: 900;
 }
+
+
+.table-scroll.limited {
+  max-height: 520px;
+  overflow: auto;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+}
+
+.table-scroll.limited table {
+  min-width: 1100px;
+}
+
+.table-scroll.limited thead th {
+  position: sticky;
+  top: 0;
+  background: white;
+  z-index: 2;
+}
