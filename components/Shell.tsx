@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { FileCheck2 } from "lucide-react";
 import {
   BarChart3,
   Building2,
@@ -18,7 +19,6 @@ import {
   Store,
   Target,
   Users,
-  X
 } from "lucide-react";
 
 const operacional = [
@@ -26,9 +26,11 @@ const operacional = [
   ["/solicitacoes", ClipboardList, "Solicitações"],
   ["/diretor", CheckSquare, "Aprovação Diretoria"],
   ["/patrimonio", Building2, "Patrimônio"],
-  ["/orcamento", FolderKanban, "Projetos e Orçamento"],
+  ["/projetos", FolderKanban, "Projetos"],
+  ["/orcamentos", FileBarChart, "Orçamentos/Cotações"],
   ["/execucao", Settings, "Execução e SAP"],
-  ["/relatorios", BarChart3, "Relatórios"]
+  ["/relatorios", BarChart3, "Relatórios"],
+  ["/aprovacao-final", FileCheck2, "Aprovação Final"],
 ] as const;
 
 const cadastros = [
@@ -36,33 +38,32 @@ const cadastros = [
   ["/cadastros/usuarios", Users, "Usuários"],
   ["/cadastros/filiais", Store, "Filiais"],
   ["/cadastros/diretorias", Target, "Diretorias"],
-  ["/cadastros/catalogo", Package, "Catálogo de investimentos"]
+  ["/cadastros/catalogo", Package, "Catálogo de investimentos"],
 ] as const;
 
 export function Shell({
   title,
   subtitle,
-  children
+  children,
 }: {
   title: string;
   subtitle: string;
   children: React.ReactNode;
 }) {
   const [open, setOpen] = useState(false);
-
   const router = useRouter();
 
-async function sair() {
-  if (supabase) {
-    await supabase.auth.signOut();
+  async function sair() {
+    if (supabase) {
+      await supabase.auth.signOut();
+    }
+
+    document.cookie =
+      "investflow-auth=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+
+    router.push("/login");
+    router.refresh();
   }
-
-  document.cookie =
-    "investflow-auth=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
-
-  router.push("/login");
-  router.refresh();
-}
 
   useEffect(() => {
     const saved = localStorage.getItem("investflow-sidebar-open");
@@ -80,7 +81,7 @@ async function sair() {
       <aside className="sidebar">
         <div className="sidebar-head">
           {open && (
-            <Link href="/" className="brand side-brand">
+            <Link href="/dashboard" className="brand side-brand">
               <div className="logo">↗</div>
 
               <div>
@@ -131,23 +132,21 @@ async function sair() {
           </div>
 
           <div className="user-pill">
-  <div className="avatar">A</div>
+            <div className="avatar">A</div>
 
-  <div className="user-info">
-    <strong>Admin Modelo</strong>
-    <span>Perfil administrador</span>
-  </div>
+            <div className="user-info">
+              <strong>Admin Modelo</strong>
+              <span>Perfil administrador</span>
+            </div>
 
-  <button className="logout-button" onClick={sair}>
-  Sair
-</button>
-</div>
+            <button className="logout-button" onClick={sair}>
+              Sair
+            </button>
+          </div>
         </header>
 
         {children}
       </main>
     </div>
   );
-  
 }
-
