@@ -597,7 +597,7 @@ export default function Solicitacoes() {
             </label>
           </div>
 
-          <div className="request-table-limited diretoria-table">
+          <div className="request-table-limited solicitacoes-table">
             <table>
               <thead>
                 <tr>

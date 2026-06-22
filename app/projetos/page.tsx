@@ -299,14 +299,32 @@ export default function Projetos() {
       subtitle="Classificação das solicitações em projetos corporativos e definição dos responsáveis."
     >
       <section className="kpi-grid">
-        <KpiCard label="Pendentes" value={String(pendentes.length)} variant="orange" />
-        <KpiCard label="Alta prioridade" value={String(altaPrioridade)} variant="purple" />
-        <KpiCard label="Projetos definidos" value={String(projetosDefinidos.length)} variant="blue" />
-        <KpiCard label="Total" value={String(solicitacoes.length)} variant="green" />
+        <KpiCard
+          label="Pendentes"
+          value={String(pendentes.length)}
+          variant="orange"
+        />
+        <KpiCard
+          label="Alta prioridade"
+          value={String(altaPrioridade)}
+          variant="purple"
+        />
+        <KpiCard
+          label="Projetos definidos"
+          value={String(projetosDefinidos.length)}
+          variant="blue"
+        />
+        <KpiCard
+          label="Total"
+          value={String(solicitacoes.length)}
+          variant="green"
+        />
       </section>
 
       {mensagem && (
-        <div className={mensagem.startsWith("Erro") ? "alert-error" : "alert-success"}>
+        <div
+          className={mensagem.startsWith("Erro") ? "alert-error" : "alert-success"}
+        >
           {mensagem}
         </div>
       )}
@@ -316,7 +334,8 @@ export default function Projetos() {
           <div>
             <h2>Solicitações para definição de projeto</h2>
             <p>
-              Classifique cada solicitação no projeto correto e atribua o responsável pelo orçamento.
+              Classifique cada solicitação no projeto correto e atribua o
+              responsável pelo orçamento.
             </p>
           </div>
         </div>
@@ -351,18 +370,8 @@ export default function Projetos() {
           onChange={(e) => setBusca(e.target.value)}
         />
 
-        <div className="request-table-limited diretoria-table">
-          <table style={{ tableLayout: "fixed", width: "100%" }}>
-            <colgroup>
-              <col style={{ width: "110px" }} />
-              <col style={{ width: "260px" }} />
-              <col style={{ width: "230px" }} />
-              <col style={{ width: "180px" }} />
-              <col style={{ width: "150px" }} />
-              <col style={{ width: "80px" }} />
-              <col style={{ width: "180px" }} />
-            </colgroup>
-
+        <div className="request-table-limited projetos-table">
+          <table>
             <thead>
               <tr>
                 <th>Código</th>
@@ -497,23 +506,34 @@ export default function Projetos() {
 
               <div>
                 <strong>Responsável atual</strong>
-                <span>{solicitacaoDetalhe.responsavel_orcamento || "Não definido"}</span>
+                <span>
+                  {solicitacaoDetalhe.responsavel_orcamento || "Não definido"}
+                </span>
               </div>
             </div>
 
             <div className="detail-block">
               <strong>Justificativa da solicitação</strong>
-              <p>{solicitacaoDetalhe.justificativa || "Sem justificativa informada."}</p>
+              <p>
+                {solicitacaoDetalhe.justificativa ||
+                  "Sem justificativa informada."}
+              </p>
             </div>
 
             <div className="detail-block">
               <strong>Retorno da diretoria</strong>
-              <p>{solicitacaoDetalhe.observacao_diretoria || "Sem retorno da diretoria."}</p>
+              <p>
+                {solicitacaoDetalhe.observacao_diretoria ||
+                  "Sem retorno da diretoria."}
+              </p>
             </div>
 
             <div className="detail-block">
               <strong>Retorno do patrimônio</strong>
-              <p>{solicitacaoDetalhe.parecer_patrimonio || "Sem retorno do patrimônio."}</p>
+              <p>
+                {solicitacaoDetalhe.parecer_patrimonio ||
+                  "Sem retorno do patrimônio."}
+              </p>
             </div>
 
             <div className="form-grid">

@@ -17,115 +17,152 @@ type SolicitacaoRelatorio = {
   filial_id: string | null;
   setor_id: string | null;
   descricao_item_manual: string | null;
-  filiais: {
-    nome_filial: string | null;
-  } | null;
-  setores: {
-    nome: string | null;
-  } | null;
-  itens_catalogo: {
-    nome_item: string | null;
-  } | null;
+  filiais: { nome_filial: string | null } | null;
+  setores: { nome: string | null } | null;
+  itens_catalogo: { nome_item: string | null } | null;
 };
 
 const styles: Record<string, CSSProperties> = {
-  page: { display: "flex", flexDirection: "column", gap: 24 },
-  header: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    gap: 16,
-  },
-  title: { fontSize: 30, fontWeight: 800, color: "#0f172a", margin: 0 },
-  subtitle: { marginTop: 6, color: "#64748b", fontSize: 14 },
-  card: {
-    background: "white",
-    border: "1px solid #e2e8f0",
-    borderRadius: 18,
-    padding: 20,
-    boxShadow: "0 10px 25px rgba(15,23,42,.06)",
-  },
-  button: {
-    border: "none",
-    background: "#0f172a",
+  page: { display: "flex", flexDirection: "column", gap: 22 },
+  actions: { display: "flex", justifyContent: "flex-end" },
+  exportButton: {
+    border: 0,
+    background: "#07111f",
     color: "white",
-    padding: "10px 16px",
-    borderRadius: 12,
-    fontWeight: 700,
+    padding: "12px 18px",
+    borderRadius: 14,
+    fontWeight: 900,
     cursor: "pointer",
+    boxShadow: "0 12px 28px rgba(15,23,42,.18)",
   },
   kpiGrid: {
     display: "grid",
-    gridTemplateColumns: "repeat(auto-fit,minmax(180px,1fr))",
-    gap: 16,
+    gridTemplateColumns: "repeat(4, minmax(0, 1fr))",
+    gap: 18,
+  },
+  kpi: {
+    background: "white",
+    border: "1px solid #e2e8f0",
+    borderRadius: 20,
+    padding: 22,
+    boxShadow: "0 16px 38px rgba(15,23,42,.07)",
   },
   kpiLabel: {
     color: "#64748b",
     fontSize: 12,
-    fontWeight: 800,
+    fontWeight: 900,
     textTransform: "uppercase",
+    letterSpacing: ".5px",
   },
-  kpiValue: { marginTop: 8, fontSize: 30, fontWeight: 900 },
-  filtersGrid: {
+  kpiValue: {
+    marginTop: 10,
+    fontSize: 30,
+    fontWeight: 900,
+    color: "#07111f",
+  },
+  panel: {
+    background: "white",
+    border: "1px solid #e2e8f0",
+    borderRadius: 22,
+    padding: 24,
+    boxShadow: "0 16px 42px rgba(15,23,42,.07)",
+    overflow: "hidden",
+  },
+  panelHeader: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
+    gap: 18,
+    marginBottom: 18,
+  },
+  panelTitle: { margin: 0, fontSize: 22, fontWeight: 900, color: "#07111f" },
+  panelSubtitle: { margin: "6px 0 0", color: "#64748b", fontSize: 14 },
+  filterGrid: {
     display: "grid",
-    gridTemplateColumns: "repeat(auto-fit,minmax(190px,1fr))",
-    gap: 12,
-    marginTop: 16,
+    gridTemplateColumns: "repeat(4, minmax(0, 1fr))",
+    gap: 14,
   },
   select: {
-    height: 44,
-    border: "1px solid #cbd5e1",
-    borderRadius: 12,
-    padding: "0 12px",
+    height: 46,
+    border: "1px solid #dbe3ee",
+    borderRadius: 14,
     background: "white",
-    fontWeight: 700,
-    color: "#0f172a",
+    color: "#07111f",
+    padding: "0 14px",
+    fontWeight: 800,
+    minWidth: 0,
   },
-  dashboardGrid: {
-    display: "grid",
-    gridTemplateColumns: "repeat(auto-fit,minmax(320px,1fr))",
-    gap: 16,
+  cleanButton: {
+    border: "1px solid #dbe3ee",
+    background: "white",
+    color: "#07111f",
+    borderRadius: 12,
+    padding: "10px 14px",
+    fontWeight: 900,
+    cursor: "pointer",
   },
-  sectionTitle: { fontSize: 18, fontWeight: 900, color: "#0f172a", margin: 0 },
-  row: {
+  gridThree: {
     display: "grid",
-    gridTemplateColumns: "1fr auto auto",
+    gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
+    gap: 18,
+  },
+  list: { display: "grid", gap: 0, maxHeight: 360, overflowY: "auto" },
+  listRow: {
+    display: "grid",
+    gridTemplateColumns: "minmax(0, 1fr) auto auto",
     gap: 12,
     alignItems: "center",
-    padding: "12px 0",
     borderBottom: "1px solid #e2e8f0",
+    padding: "13px 0",
   },
+  listName: {
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+    whiteSpace: "nowrap",
+    fontWeight: 850,
+    color: "#07111f",
+  },
+  listValue: { whiteSpace: "nowrap", color: "#07111f", fontWeight: 700 },
   badge: {
     display: "inline-flex",
-    padding: "6px 11px",
+    alignItems: "center",
+    justifyContent: "center",
     borderRadius: 999,
-    background: "#e2e8f0",
+    padding: "7px 11px",
+    background: "#e8eef7",
     color: "#334155",
     fontSize: 12,
-    fontWeight: 800,
+    fontWeight: 900,
     whiteSpace: "nowrap",
   },
   tableWrap: {
-    background: "white",
     border: "1px solid #e2e8f0",
     borderRadius: 18,
     overflow: "hidden",
-    boxShadow: "0 10px 25px rgba(15,23,42,.06)",
+  },
+  tableScroller: { maxHeight: 420, overflowY: "auto", overflowX: "hidden" },
+  table: {
+    width: "100%",
+    tableLayout: "fixed",
+    borderCollapse: "collapse",
+    fontSize: 13,
   },
   th: {
     background: "#f8fafc",
-    color: "#334155",
+    color: "#475569",
     textAlign: "left",
-    padding: "14px 16px",
+    padding: "13px 12px",
     borderBottom: "1px solid #e2e8f0",
     fontWeight: 900,
     whiteSpace: "nowrap",
   },
   td: {
-    padding: "14px 16px",
+    padding: "13px 12px",
     borderBottom: "1px solid #e2e8f0",
-    color: "#0f172a",
-    verticalAlign: "middle",
+    color: "#07111f",
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+    whiteSpace: "nowrap",
   },
 };
 
@@ -137,20 +174,26 @@ function moeda(valor: number) {
 }
 
 function normalizar(texto: string | null | undefined) {
-  return texto ? texto.replaceAll("_", " ") : "-";
+  if (!texto) return "-";
+
+  const mapa: Record<string, string> = {
+    enviada: "Enviada",
+    ajuste_solicitado: "Ajuste solicitado",
+    rejeitada_diretoria: "Rejeitada diretoria",
+    aprovada_diretoria: "Aprovada diretoria",
+    rejeitada_patrimonio: "Rejeitada patrimônio",
+    pendente_orcamento: "Pendente orçamento",
+    aguardando_cotacao: "Aguardando cotação",
+    orcamento_concluido: "Orçamento concluído",
+    em_orcamento: "Em orçamento",
+  };
+
+  return mapa[texto] ?? texto.replaceAll("_", " ");
 }
 
-function Kpi({
-  label,
-  value,
-  color = "#0f172a",
-}: {
-  label: string;
-  value: string | number;
-  color?: string;
-}) {
+function Kpi({ label, value, color = "#07111f" }: { label: string; value: string | number; color?: string }) {
   return (
-    <div style={styles.card}>
+    <div style={styles.kpi}>
       <div style={styles.kpiLabel}>{label}</div>
       <div style={{ ...styles.kpiValue, color }}>{value}</div>
     </div>
@@ -160,7 +203,6 @@ function Kpi({
 export default function Relatorios() {
   const [solicitacoes, setSolicitacoes] = useState<SolicitacaoRelatorio[]>([]);
   const [loading, setLoading] = useState(true);
-
   const [anoFiltro, setAnoFiltro] = useState("todos");
   const [filialFiltro, setFilialFiltro] = useState("todos");
   const [setorFiltro, setSetorFiltro] = useState("todos");
@@ -171,45 +213,44 @@ export default function Relatorios() {
   }, []);
 
   async function carregarDados() {
-  if (!supabase) {
-    console.error("Supabase não configurado.");
-    setSolicitacoes([]);
+    if (!supabase) {
+      setSolicitacoes([]);
+      setLoading(false);
+      return;
+    }
+
+    setLoading(true);
+
+    const { data, error } = await supabase
+      .from("solicitacoes")
+      .select(`
+        id,
+        codigo,
+        ano,
+        prioridade,
+        status,
+        tipo,
+        valor_orcado,
+        fornecedor_orcamento,
+        created_at,
+        filial_id,
+        setor_id,
+        descricao_item_manual,
+        filiais ( nome_filial ),
+        setores ( nome ),
+        itens_catalogo ( nome_item )
+      `)
+      .order("created_at", { ascending: false });
+
+    if (error) {
+      console.error("Erro relatórios:", error);
+      setSolicitacoes([]);
+    } else {
+      setSolicitacoes((data ?? []) as unknown as SolicitacaoRelatorio[]);
+    }
+
     setLoading(false);
-    return;
   }
-
-  setLoading(true);
-
-  const { data, error } = await supabase
-    .from("solicitacoes")
-    .select(`
-      id,
-      codigo,
-      ano,
-      prioridade,
-      status,
-      tipo,
-      valor_orcado,
-      fornecedor_orcamento,
-      created_at,
-      filial_id,
-      setor_id,
-      descricao_item_manual,
-      filiais ( nome_filial ),
-      setores ( nome ),
-      itens_catalogo ( nome_item )
-    `)
-    .order("created_at", { ascending: false });
-
-  if (error) {
-    console.error("Erro relatórios:", error);
-    setSolicitacoes([]);
-  } else {
-    setSolicitacoes((data ?? []) as unknown as SolicitacaoRelatorio[]);
-  }
-
-  setLoading(false);
-}
 
   const anos = useMemo(() => {
     return Array.from(new Set(solicitacoes.map((s) => s.ano))).sort(
@@ -245,6 +286,12 @@ export default function Relatorios() {
     );
   }, [solicitacoes]);
 
+  const statusDisponiveis = useMemo(() => {
+    return Array.from(
+      new Set(solicitacoes.map((s) => s.status).filter(Boolean) as string[])
+    ).sort();
+  }, [solicitacoes]);
+
   const filtradas = useMemo(() => {
     return solicitacoes.filter((s) => {
       return (
@@ -258,8 +305,10 @@ export default function Relatorios() {
 
   const total = filtradas.length;
 
-  const emOrcamento = filtradas.filter((s) =>
-    String(s.status).includes("orcamento")
+  const emAndamento = filtradas.filter((s) =>
+    ["pendente_orcamento", "aguardando_cotacao", "em_orcamento"].includes(
+      String(s.status)
+    )
   ).length;
 
   const orcamentosConcluidos = filtradas.filter(
@@ -285,10 +334,8 @@ export default function Relatorios() {
     filtradas.forEach((s) => {
       const nome = s.filiais?.nome_filial || "Sem filial";
       const atual = mapa.get(nome) || { qtd: 0, valor: 0 };
-
       atual.qtd += 1;
       atual.valor += Number(s.valor_orcado || 0);
-
       mapa.set(nome, atual);
     });
 
@@ -301,10 +348,8 @@ export default function Relatorios() {
     filtradas.forEach((s) => {
       const nome = s.setores?.nome || "Sem setor";
       const atual = mapa.get(nome) || { qtd: 0, valor: 0 };
-
       atual.qtd += 1;
       atual.valor += Number(s.valor_orcado || 0);
-
       mapa.set(nome, atual);
     });
 
@@ -375,57 +420,56 @@ export default function Relatorios() {
 
     URL.revokeObjectURL(url);
   }
-    return (
-  <Shell
-    title="Relatórios"
-    subtitle="Visão geral dos investimentos por filial, setor, orçamento e valor."
-  >
-    <div style={styles.page}>
-        <div style={styles.header}>
-          <div>
-            <h1 style={styles.title}>Relatórios</h1>
-            <p style={styles.subtitle}>
-              Visão geral dos investimentos por filial, setor, orçamento e valor.
-            </p>
-          </div>
 
-          <button onClick={exportarCsv} style={styles.button}>
+  return (
+    <Shell
+      title="Relatórios"
+      subtitle="Visão gerencial dos investimentos por filial, setor, status e valor."
+    >
+      <div style={styles.page}>
+        <div style={styles.actions}>
+          <button onClick={exportarCsv} style={styles.exportButton}>
             Exportar CSV
           </button>
         </div>
 
         <div style={styles.kpiGrid}>
           <Kpi label="Solicitações" value={total} />
-          <Kpi label="Em orçamento" value={emOrcamento} color="#2563eb" />
+          <Kpi label="Em andamento" value={emAndamento} color="#2563eb" />
           <Kpi
             label="Orçamentos concluídos"
             value={orcamentosConcluidos}
             color="#059669"
           />
-          <Kpi label="Filiais atendidas" value={filiaisAtendidas} color="#7c3aed" />
-          <Kpi label="Valor orçado" value={moeda(valorTotal)} />
+          <Kpi
+            label="Filiais atendidas"
+            value={filiaisAtendidas}
+            color="#7c3aed"
+          />
         </div>
 
-        <div style={styles.card}>
-          <div style={styles.header}>
-            <h2 style={styles.sectionTitle}>Filtros rápidos</h2>
+        <div style={styles.kpiGrid}>
+          <Kpi label="Valor orçado" value={moeda(valorTotal)} color="#059669" />
+          <Kpi label="Setores atendidos" value={setoresAtendidos} color="#0ea5e9" />
+          <Kpi label="Registros filtrados" value={filtradas.length} color="#f97316" />
+          <Kpi label="Base total" value={solicitacoes.length} color="#64748b" />
+        </div>
 
-            <button
-              onClick={limparFiltros}
-              style={{
-                border: "1px solid #cbd5e1",
-                background: "white",
-                borderRadius: 10,
-                padding: "8px 12px",
-                cursor: "pointer",
-                fontWeight: 800,
-              }}
-            >
+        <section style={styles.panel}>
+          <div style={styles.panelHeader}>
+            <div>
+              <h2 style={styles.panelTitle}>Filtros rápidos</h2>
+              <p style={styles.panelSubtitle}>
+                Refine a visão por ano, filial, setor ou status.
+              </p>
+            </div>
+
+            <button onClick={limparFiltros} style={styles.cleanButton}>
               Limpar filtros
             </button>
           </div>
 
-          <div style={styles.filtersGrid}>
+          <div style={styles.filterGrid}>
             <select
               value={anoFiltro}
               onChange={(e) => setAnoFiltro(e.target.value)}
@@ -471,153 +515,136 @@ export default function Relatorios() {
               style={styles.select}
             >
               <option value="todos">Todos os status</option>
-              {resumoPorStatus.map(([status]) => (
+              {statusDisponiveis.map((status) => (
                 <option key={status} value={status}>
                   {normalizar(status)}
                 </option>
               ))}
             </select>
           </div>
-        </div>
+        </section>
 
-        <div style={styles.dashboardGrid}>
-          <div style={styles.card}>
-            <h2 style={styles.sectionTitle}>Investimentos por filial</h2>
-
-            <div style={{ marginTop: 12 }}>
-              {resumoPorFilial.slice(0, 12).map(([nome, dados]) => (
-                <div key={nome} style={styles.row}>
-                  <strong>{nome}</strong>
-                  <span>{moeda(dados.valor)}</span>
+        <div style={styles.gridThree}>
+          <section style={styles.panel}>
+            <h2 style={styles.panelTitle}>Por filial</h2>
+            <div style={styles.list}>
+              {resumoPorFilial.slice(0, 10).map(([nome, dados]) => (
+                <div key={nome} style={styles.listRow}>
+                  <strong style={styles.listName}>{nome}</strong>
+                  <span style={styles.listValue}>{moeda(dados.valor)}</span>
                   <span style={styles.badge}>{dados.qtd}</span>
                 </div>
               ))}
             </div>
-          </div>
+          </section>
 
-          <div style={styles.card}>
-            <h2 style={styles.sectionTitle}>Investimentos por setor</h2>
-
-            <div style={{ marginTop: 12 }}>
-              {resumoPorSetor.slice(0, 12).map(([nome, dados]) => (
-                <div key={nome} style={styles.row}>
-                  <strong>{nome}</strong>
-                  <span>{moeda(dados.valor)}</span>
+          <section style={styles.panel}>
+            <h2 style={styles.panelTitle}>Por setor</h2>
+            <div style={styles.list}>
+              {resumoPorSetor.slice(0, 10).map(([nome, dados]) => (
+                <div key={nome} style={styles.listRow}>
+                  <strong style={styles.listName}>{nome}</strong>
+                  <span style={styles.listValue}>{moeda(dados.valor)}</span>
                   <span style={styles.badge}>{dados.qtd}</span>
                 </div>
               ))}
             </div>
-          </div>
+          </section>
 
-          <div style={styles.card}>
-            <h2 style={styles.sectionTitle}>Distribuição por status</h2>
-
-            <div style={{ marginTop: 12 }}>
+          <section style={styles.panel}>
+            <h2 style={styles.panelTitle}>Por status</h2>
+            <div style={styles.list}>
               {resumoPorStatus.map(([status, qtd]) => (
-                <div key={status} style={styles.row}>
-                  <strong style={{ textTransform: "capitalize" }}>
-                    {normalizar(status)}
-                  </strong>
-                  <span></span>
+                <div key={status} style={styles.listRow}>
+                  <strong style={styles.listName}>{normalizar(status)}</strong>
+                  <span />
                   <span style={styles.badge}>{qtd}</span>
                 </div>
               ))}
             </div>
-          </div>
+          </section>
         </div>
 
-        <div style={styles.tableWrap}>
-          <div
-            style={{
-              padding: "18px 20px",
-              borderBottom: "1px solid #e2e8f0",
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-            }}
-          >
+        <section style={styles.panel}>
+          <div style={styles.panelHeader}>
             <div>
-              <h2 style={styles.sectionTitle}>Top investimentos</h2>
-              <p style={{ margin: "4px 0 0", fontSize: 13, color: "#64748b" }}>
-                Maiores valores orçados encontrados no filtro atual.
+              <h2 style={styles.panelTitle}>Top investimentos</h2>
+              <p style={styles.panelSubtitle}>
+                Maiores valores orçados conforme os filtros aplicados.
               </p>
             </div>
 
-            <span style={styles.badge}>
-              {setoresAtendidos} setores atendidos
-            </span>
+            <span style={styles.badge}>{topInvestimentos.length} registros</span>
           </div>
 
-          <div style={{ overflowX: "auto" }}>
-            <table
-              style={{
-                width: "100%",
-                minWidth: 1100,
-                borderCollapse: "separate",
-                borderSpacing: 0,
-                fontSize: 13,
-              }}
-            >
-              <thead>
-                <tr>
-                  <th style={styles.th}>Código</th>
-                  <th style={styles.th}>Filial</th>
-                  <th style={styles.th}>Setor</th>
-                  <th style={styles.th}>Item</th>
-                  <th style={styles.th}>Status</th>
-                  <th style={styles.th}>Valor</th>
-                  <th style={styles.th}>Fornecedor</th>
-                </tr>
-              </thead>
-
-              <tbody>
-                {loading ? (
+          <div style={styles.tableWrap}>
+            <div style={styles.tableScroller}>
+              <table style={styles.table}>
+                <thead>
                   <tr>
-                    <td style={styles.td} colSpan={7}>
-                      Carregando...
-                    </td>
+                    <th style={{ ...styles.th, width: 190 }}>Código</th>
+                    <th style={{ ...styles.th, width: 210 }}>Filial</th>
+                    <th style={{ ...styles.th, width: 150 }}>Setor</th>
+                    <th style={styles.th}>Item</th>
+                    <th style={{ ...styles.th, width: 170 }}>Status</th>
+                    <th style={{ ...styles.th, width: 130 }}>Valor</th>
+                    <th style={{ ...styles.th, width: 140 }}>Fornecedor</th>
                   </tr>
-                ) : topInvestimentos.length === 0 ? (
-                  <tr>
-                    <td style={styles.td} colSpan={7}>
-                      Nenhum registro encontrado.
-                    </td>
-                  </tr>
-                ) : (
-                  topInvestimentos.map((s) => (
-                    <tr key={s.id}>
-                      <td style={{ ...styles.td, fontWeight: 900 }}>
-                        {s.codigo || "-"}
+                </thead>
+
+                <tbody>
+                  {loading ? (
+                    <tr>
+                      <td style={styles.td} colSpan={7}>
+                        Carregando...
                       </td>
-
-                      <td style={styles.td}>
-                        {s.filiais?.nome_filial || "Sem filial"}
-                      </td>
-
-                      <td style={styles.td}>{s.setores?.nome || "Sem setor"}</td>
-
-                      <td style={{ ...styles.td, minWidth: 240 }}>
-                        {s.itens_catalogo?.nome_item ||
-                          s.descricao_item_manual ||
-                          "Sem item"}
-                      </td>
-
-                      <td style={styles.td}>
-                        <span style={styles.badge}>{normalizar(s.status)}</span>
-                      </td>
-
-                      <td style={{ ...styles.td, fontWeight: 900 }}>
-                        {moeda(Number(s.valor_orcado || 0))}
-                      </td>
-
-                      <td style={styles.td}>{s.fornecedor_orcamento || "-"}</td>
                     </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
+                  ) : topInvestimentos.length === 0 ? (
+                    <tr>
+                      <td style={styles.td} colSpan={7}>
+                        Nenhum registro encontrado.
+                      </td>
+                    </tr>
+                  ) : (
+                    topInvestimentos.map((s) => (
+                      <tr key={s.id}>
+                        <td style={{ ...styles.td, fontWeight: 900 }}>
+                          {s.codigo || "-"}
+                        </td>
+
+                        <td style={styles.td}>
+                          {s.filiais?.nome_filial || "Sem filial"}
+                        </td>
+
+                        <td style={styles.td}>
+                          {s.setores?.nome || "Sem setor"}
+                        </td>
+
+                        <td style={{ ...styles.td, fontWeight: 700 }}>
+                          {s.itens_catalogo?.nome_item ||
+                            s.descricao_item_manual ||
+                            "Sem item"}
+                        </td>
+
+                        <td style={styles.td}>
+                          <span style={styles.badge}>{normalizar(s.status)}</span>
+                        </td>
+
+                        <td style={{ ...styles.td, fontWeight: 900 }}>
+                          {moeda(Number(s.valor_orcado || 0))}
+                        </td>
+
+                        <td style={styles.td}>
+                          {s.fornecedor_orcamento || "-"}
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
           </div>
-        </div>
+        </section>
       </div>
     </Shell>
   );

@@ -1,9 +1,8 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import Link from "next/link";
-import { useEffect, useState } from "react";
 import { FileCheck2 } from "lucide-react";
 import {
   BarChart3,
@@ -13,7 +12,6 @@ import {
   FileBarChart,
   FolderKanban,
   LayoutDashboard,
-  Menu,
   Package,
   Settings,
   Store,
@@ -50,8 +48,8 @@ export function Shell({
   subtitle: string;
   children: React.ReactNode;
 }) {
-  const [open, setOpen] = useState(false);
   const router = useRouter();
+  const pathname = usePathname();
 
   async function sair() {
     if (supabase) {
@@ -65,60 +63,53 @@ export function Shell({
     router.refresh();
   }
 
-  useEffect(() => {
-    const saved = localStorage.getItem("investflow-sidebar-open");
-    setOpen(saved === "true");
-  }, []);
-
-  function toggleSidebar() {
-    const next = !open;
-    setOpen(next);
-    localStorage.setItem("investflow-sidebar-open", String(next));
+  function isActive(href: string) {
+    if (href === "/dashboard") return pathname === href;
+    return pathname === href || pathname.startsWith(`${href}/`);
   }
 
   return (
-    <div className={open ? "shell" : "shell shell-collapsed"}>
-      <aside className="sidebar">
+    <div className="shell">
+      <aside className="sidebar sidebar-fixed">
         <div className="sidebar-head">
-          {open && (
-            <Link href="/dashboard" className="brand side-brand">
-              <div className="logo">↗</div>
+          <Link href="/dashboard" className="brand side-brand">
+            <div className="logo">↗</div>
 
-              <div>
-                <strong>InvestFlow</strong>
-                <span>Gestão de Investimentos</span>
-              </div>
-            </Link>
-          )}
-
-          <button
-            type="button"
-            className="sidebar-toggle"
-            onClick={toggleSidebar}
-            title={open ? "Recolher menu" : "Abrir menu"}
-          >
-            <Menu size={20} />
-          </button>
+            <div>
+              <strong>InvestFlow</strong>
+              <span>Gestão de Investimentos</span>
+            </div>
+          </Link>
         </div>
 
-        {open && <p className="side-title">Fluxo operacional</p>}
+        <p className="side-title">Fluxo operacional</p>
 
         <nav className="nav-list">
           {operacional.map(([href, Icon, label]) => (
-            <Link href={href} key={href} className="nav-link" title={label}>
+            <Link
+              href={href}
+              key={href}
+              className={isActive(href) ? "nav-link active" : "nav-link"}
+              title={label}
+            >
               <Icon size={20} />
-              {open && <span>{label}</span>}
+              <span>{label}</span>
             </Link>
           ))}
         </nav>
 
-        {open && <p className="side-title cad">Cadastros</p>}
+        <p className="side-title cad">Cadastros</p>
 
         <nav className="nav-list">
           {cadastros.map(([href, Icon, label]) => (
-            <Link href={href} key={href} className="nav-link" title={label}>
+            <Link
+              href={href}
+              key={href}
+              className={isActive(href) ? "nav-link active" : "nav-link"}
+              title={label}
+            >
               <Icon size={20} />
-              {open && <span>{label}</span>}
+              <span>{label}</span>
             </Link>
           ))}
         </nav>

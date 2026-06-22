@@ -21,12 +21,10 @@ type Solicitacao = {
   parecer_patrimonio: string | null;
   foto_url: string | null;
   created_at: string;
-
   projeto_orcamento: string | null;
   responsavel_orcamento: string | null;
   observacao_orcamento: string | null;
   data_encaminhamento_orcamento: string | null;
-
   fornecedor_orcamento: string | null;
   valor_orcado: number | null;
   prazo_orcamento: string | null;
@@ -67,7 +65,6 @@ export default function Orcamentos() {
           .select("*")
           .in("status", ["aguardando_cotacao", "orcamento_concluido"])
           .order("created_at", { ascending: false }),
-
         supabase.from("filiais").select("id, nome_filial"),
         supabase.from("setores").select("id, nome"),
         supabase.from("itens_catalogo").select("id, nome_item"),
@@ -336,9 +333,7 @@ export default function Orcamentos() {
 
       {mensagem && (
         <div
-          className={
-            mensagem.startsWith("Erro") ? "alert-error" : "alert-success"
-          }
+          className={mensagem.startsWith("Erro") ? "alert-error" : "alert-success"}
         >
           {mensagem}
         </div>
@@ -385,18 +380,8 @@ export default function Orcamentos() {
           onChange={(e) => setBusca(e.target.value)}
         />
 
-        <div className="request-table-limited diretoria-table">
-          <table style={{ tableLayout: "fixed", width: "100%" }}>
-            <colgroup>
-              <col style={{ width: "110px" }} />
-              <col style={{ width: "250px" }} />
-              <col style={{ width: "220px" }} />
-              <col style={{ width: "180px" }} />
-              <col style={{ width: "160px" }} />
-              <col style={{ width: "150px" }} />
-              <col style={{ width: "170px" }} />
-            </colgroup>
-
+        <div className="request-table-limited orcamentos-table">
+          <table>
             <thead>
               <tr>
                 <th>Código</th>
@@ -424,9 +409,13 @@ export default function Orcamentos() {
                     {solicitacao.projeto_orcamento ?? "-"}
                   </td>
 
-                  <td>{solicitacao.responsavel_orcamento ?? "-"}</td>
+                  <td title={solicitacao.responsavel_orcamento ?? ""}>
+                    {solicitacao.responsavel_orcamento ?? "-"}
+                  </td>
 
-                  <td>{solicitacao.fornecedor_orcamento ?? "-"}</td>
+                  <td title={solicitacao.fornecedor_orcamento ?? ""}>
+                    {solicitacao.fornecedor_orcamento ?? "-"}
+                  </td>
 
                   <td>
                     <span className={`status ${solicitacao.status}`}>
