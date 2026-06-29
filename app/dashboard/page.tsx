@@ -4,13 +4,12 @@ import { brl } from "@/lib/data";
 import { DEMO_QUERY_LIMIT, DEMO_TABLE_LIMIT, sampleRows } from "@/lib/demo";
 import { supabase } from "@/lib/supabase";
 
-const situacoes = [
-  { label: "Em orçamento", value: "em_orcamento" },
-  { label: "Comprado", value: "comprado" },
-  { label: "Em obra", value: "em_obra" },
-  { label: "Realizado", value: "realizado" },
-  { label: "Transferido", value: "transferido" },
-];
+const etapas = [
+  { label: "Diretoria", statuses: ["enviada", "ajuste_solicitado", "aprovada_diretoria", "rejeitada_diretoria"] },
+  { label: "Patrimônio", statuses: ["aprovada_diretoria", "pendente_orcamento", "rejeitada_patrimonio"] },
+  { label: "Projetos", statuses: ["pendente_orcamento", "aguardando_cotacao"] },
+  { label: "Orçamento", statuses: ["aguardando_cotacao", "orcamento_concluido"] },
+] as const;
 
 function normalizar(valor: unknown) {
   return String(valor ?? "")
@@ -20,29 +19,35 @@ function normalizar(valor: unknown) {
     .replaceAll(" ", "_");
 }
 
-function nomeSituacao(valor: unknown) {
+function nomeEtapa(valor: unknown) {
   const normalizado = normalizar(valor);
 
   const mapa: Record<string, string> = {
-    em_orcamento: "Em orçamento",
-    comprado: "Comprado",
-    em_obra: "Em obra",
-    realizado: "Realizado",
-    transferido: "Transferido",
+    enviada: "Aguardando diretoria",
+    ajuste_solicitado: "Ajuste solicitado",
+    aprovada_diretoria: "Em patrimônio",
+    rejeitada_diretoria: "Rejeitada diretoria",
+    pendente_orcamento: "Definir projeto",
+    rejeitada_patrimonio: "Rejeitada patrimônio",
+    aguardando_cotacao: "Aguardando cotação",
+    orcamento_concluido: "Cotação concluída",
   };
 
-  return mapa[normalizado] ?? "-";
+  return mapa[normalizado] ?? "Em análise";
 }
 
-function percentualSituacao(valor: unknown) {
+function percentualEtapa(valor: unknown) {
   const normalizado = normalizar(valor);
 
   const mapa: Record<string, number> = {
-    em_orcamento: 45,
-    comprado: 70,
-    em_obra: 85,
-    realizado: 100,
-    transferido: 100,
+    enviada: 15,
+    ajuste_solicitado: 10,
+    rejeitada_diretoria: 0,
+    aprovada_diretoria: 35,
+    rejeitada_patrimonio: 0,
+    pendente_orcamento: 55,
+    aguardando_cotacao: 70,
+    orcamento_concluido: 85,
   };
 
   return mapa[normalizado] ?? 0;
@@ -50,6 +55,10 @@ function percentualSituacao(valor: unknown) {
 
 function valorItem(item: any) {
   return Number(item.valor_orcado ?? item.valor_total_investimento ?? 0);
+}
+
+function contarStatus(base: any[], statuses: readonly string[]) {
+  return base.filter((item) => statuses.includes(normalizar(item.status))).length;
 }
 
 export default async function Dashboard() {
@@ -70,64 +79,64 @@ export default async function Dashboard() {
   const { data: central } = await supabase
     .from("vw_central_investimentos")
     .select("*")
+    .order("created_at", { ascending: false })
     .limit(DEMO_QUERY_LIMIT);
 
   const base = sampleRows(central ?? []);
   const amostraTabela = base.slice(0, DEMO_TABLE_LIMIT);
 
-  const itensEmOrcamento = base.filter(
-    (item: any) => normalizar(item.situacao) === "em_orcamento"
-  );
+  const aguardandoDiretoria = contarStatus(base, ["enviada"]);
+  const emOrcamento = contarStatus(base, [
+    "pendente_orcamento",
+    "aguardando_cotacao",
+    "orcamento_concluido",
+  ]);
 
   const progressoMedio =
     base.length > 0
       ? Math.round(
           base.reduce((acc: number, item: any) => {
-            return acc + percentualSituacao(item.situacao);
+            return acc + percentualEtapa(item.status);
           }, 0) / base.length
         )
       : 0;
 
-  const itensConcluidos = base.filter((item: any) => {
-    const situacao = normalizar(item.situacao);
-    return situacao === "realizado" || situacao === "transferido";
-  });
-
-  const valorAprovado = base.reduce((acc: number, item: any) => {
-    return acc + valorItem(item);
-  }, 0);
-
-  const valorConcluido = itensConcluidos.reduce((acc: number, item: any) => {
+  const valorEstimado = base.reduce((acc: number, item: any) => {
     return acc + valorItem(item);
   }, 0);
 
   return (
     <Shell
       title="Dashboard"
-      subtitle="Acompanhamento gerencial com amostra fictícia para apresentação"
+      subtitle="Acompanhamento gerencial conectado à base demo do fluxo"
     >
       <section className="demo-note">
-        <strong>Modo apresentação:</strong> dados, filiais, responsáveis e valores
-        foram reduzidos e anonimizados para preservar informações internas.
+        <strong>Modo apresentação:</strong> este painel usa uma base fictícia,
+        reduzida e vinculada às mesmas etapas do sistema: solicitações, diretoria,
+        patrimônio, projetos e orçamentos.
       </section>
 
       <section className="kpi-grid">
-        <KpiCard label="Valor aprovado demo" value={brl(valorAprovado)} variant="blue" />
+        <KpiCard label="Total em fluxo" value={String(base.length)} variant="blue" />
 
         <KpiCard
-          label="Itens em orçamento"
-          value={String(itensEmOrcamento.length)}
+          label="Aguardando diretoria"
+          value={String(aguardandoDiretoria)}
+          variant="orange"
+        />
+
+        <KpiCard
+          label="Em projeto/orçamento"
+          value={String(emOrcamento)}
           variant="green"
         />
 
         <KpiCard
-          label="Progresso médio"
-          value={`${progressoMedio}%`}
+          label="Valor estimado demo"
+          value={brl(valorEstimado)}
           variant="purple"
           progress={progressoMedio}
         />
-
-        <KpiCard label="Valor concluído" value={brl(valorConcluido)} variant="orange" />
       </section>
 
       <div className="dashboard-grid">
@@ -135,13 +144,14 @@ export default async function Dashboard() {
           <h2>Central de Investimentos Demo</h2>
 
           <p>
-            Amostra reduzida para demonstrar o fluxo de solicitação, aprovação,
-            orçamento e acompanhamento gerencial, sem expor dados reais.
+            Estes registros são fictícios e foram criados para aparecerem nas
+            telas reais do fluxo: solicitações, aprovação da diretoria,
+            patrimônio, projetos e orçamentos.
           </p>
 
           <p>
-            Exibindo {amostraTabela.length} registros fictícios de uma base demo
-            limitada a {base.length} itens.
+            Exibindo {amostraTabela.length} registros de uma base demo limitada
+            a {base.length} itens.
           </p>
 
           <div className="table-scroll limited compact-dashboard-table">
@@ -154,26 +164,26 @@ export default async function Dashboard() {
                   <th>Projeto</th>
                   <th>Item</th>
                   <th>Valor</th>
-                  <th>Status</th>
+                  <th>Etapa</th>
                   <th>%</th>
                 </tr>
               </thead>
 
               <tbody>
                 {amostraTabela.map((item: any, index: number) => (
-                  <tr key={item.id ?? item.item_projeto_id ?? index}>
+                  <tr key={item.solicitacao_id ?? item.id ?? index}>
                     <td>{item.ano}</td>
-                    <td>{item.semestre_sugerido ?? item.semestre}</td>
+                    <td>{item.semestre_sugerido ?? item.semestre_aprovado ?? "2º Sem."}</td>
                     <td>{item.nome_filial ?? `Unidade ${String(index + 1).padStart(2, "0")}`}</td>
-                    <td>{item.nome_projeto ?? "Projeto Demo"}</td>
-                    <td>{item.item_nome ?? item.item_projeto ?? "Item demonstrativo"}</td>
+                    <td>{item.nome_projeto ?? "Sem projeto definido"}</td>
+                    <td>{item.item_nome ?? "Item demonstrativo"}</td>
                     <td>{brl(valorItem(item))}</td>
                     <td>
-                      <span className={`status ${item.situacao ?? ""}`}>
-                        {nomeSituacao(item.situacao)}
+                      <span className={`status ${normalizar(item.status)}`}>
+                        {nomeEtapa(item.status)}
                       </span>
                     </td>
-                    <td>{percentualSituacao(item.situacao)}%</td>
+                    <td>{percentualEtapa(item.status)}%</td>
                   </tr>
                 ))}
 
@@ -188,16 +198,13 @@ export default async function Dashboard() {
         </section>
 
         <aside className="panel">
-          <h2>Resumo da amostra</h2>
+          <h2>Resumo por etapa</h2>
 
           <div className="status-list">
-            {situacoes.map((situacao) => (
-              <div key={situacao.value}>
-                <span>{situacao.label}</span>
-
-                <strong>
-                  {base.filter((i: any) => normalizar(i.situacao) === situacao.value).length}
-                </strong>
+            {etapas.map((etapa) => (
+              <div key={etapa.label}>
+                <span>{etapa.label}</span>
+                <strong>{contarStatus(base, etapa.statuses)}</strong>
               </div>
             ))}
           </div>
@@ -206,18 +213,25 @@ export default async function Dashboard() {
 
           <div className="status-list">
             <div>
-              <span>Total da amostra</span>
+              <span>Base demo</span>
               <strong>{base.length}</strong>
             </div>
 
             <div>
-              <span>Em orçamento</span>
-              <strong>{itensEmOrcamento.length}</strong>
+              <span>Em andamento</span>
+              <strong>
+                {contarStatus(base, [
+                  "enviada",
+                  "aprovada_diretoria",
+                  "pendente_orcamento",
+                  "aguardando_cotacao",
+                ])}
+              </strong>
             </div>
 
             <div>
-              <span>Concluídos</span>
-              <strong>{itensConcluidos.length}</strong>
+              <span>Concluídos na cotação</span>
+              <strong>{contarStatus(base, ["orcamento_concluido"])}</strong>
             </div>
 
             <div>

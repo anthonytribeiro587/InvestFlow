@@ -87,6 +87,8 @@ export default function Solicitacoes() {
     (s) =>
       s.status === "aprovada_diretoria" ||
       s.status === "pendente_orcamento" ||
+      s.status === "aguardando_cotacao" ||
+      s.status === "orcamento_concluido" ||
       s.status === "em_orcamento"
   );
 
@@ -113,6 +115,8 @@ export default function Solicitacoes() {
       aprovada_diretoria: 5,
       pendente_orcamento: 6,
       em_orcamento: 7,
+      aguardando_cotacao: 8,
+      orcamento_concluido: 9,
     };
 
     return solicitacoes
@@ -141,6 +145,8 @@ export default function Solicitacoes() {
           bateStatus =
             solicitacao.status === "aprovada_diretoria" ||
             solicitacao.status === "pendente_orcamento" ||
+            solicitacao.status === "aguardando_cotacao" ||
+            solicitacao.status === "orcamento_concluido" ||
             solicitacao.status === "em_orcamento";
         }
 
@@ -464,6 +470,8 @@ export default function Solicitacoes() {
       rejeitada_patrimonio: "Rejeitada patrimônio",
       pendente_orcamento: "Pendente orçamento",
       em_orcamento: "Em orçamento",
+      aguardando_cotacao: "Aguardando cotação",
+      orcamento_concluido: "Cotação concluída",
       recusado_investimento: "Recusado",
       aprovado_investimento: "Aprovado final",
     };
