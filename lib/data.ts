@@ -17,21 +17,27 @@ export const requests = [
 ];
 
 export const filiais = [
-  { codigo: "001", filial: "Filial 01", area: "Área A", diretor: "Diretor A", gerente: "Gerente Loja 01", cidade: "Cidade Modelo" },
-  { codigo: "002", filial: "Filial 02", area: "Área B", diretor: "Diretor B", gerente: "Gerente Loja 02", cidade: "Cidade Modelo" },
-  { codigo: "003", filial: "Filial 03", area: "Área A", diretor: "Diretor A", gerente: "Gerente Loja 03", cidade: "Cidade Modelo" }
+  { codigo: "U001", filial: "Unidade 01 — Centro", area: "Diretoria Operacional", diretor: "Diretoria Demo", gerente: "Solicitante Loja 01", cidade: "Metropolitana" },
+  { codigo: "U002", filial: "Unidade 02 — Norte", area: "Diretoria Operacional", diretor: "Diretoria Demo", gerente: "Solicitante Loja 02", cidade: "Metropolitana" },
+  { codigo: "U003", filial: "Unidade 03 — Sul", area: "Diretoria Expansão", diretor: "Diretoria Demo", gerente: "Solicitante Loja 03", cidade: "Metropolitana" },
+  { codigo: "U004", filial: "Unidade 04 — Vale", area: "Diretoria Expansão", diretor: "Diretoria Demo", gerente: "Solicitante Loja 04", cidade: "Interior" },
+  { codigo: "U005", filial: "Unidade 05 — Litoral", area: "Diretoria Administrativa", diretor: "Diretoria Demo", gerente: "Solicitante Loja 05", cidade: "Litoral" },
+  { codigo: "U006", filial: "Unidade 06 — Serra", area: "Diretoria Administrativa", diretor: "Diretoria Demo", gerente: "Solicitante Loja 06", cidade: "Interior" },
+  { codigo: "U007", filial: "Unidade 07 — Industrial", area: "Diretoria Financeira", diretor: "Diretoria Demo", gerente: "Solicitante Loja 07", cidade: "Metropolitana" },
+  { codigo: "U008", filial: "Unidade 08 — Comercial", area: "Diretoria Financeira", diretor: "Diretoria Demo", gerente: "Solicitante Loja 08", cidade: "Interior" }
 ];
 
 export const diretorias = [
-  { area: "Área A", diretor: "Diretor A", filiais: 2, status: "Ativa" },
-  { area: "Área B", diretor: "Diretor B", filiais: 1, status: "Ativa" },
-  { area: "Área C", diretor: "Diretor C", filiais: 1, status: "Ativa" }
+  { area: "Diretoria Operacional", diretor: "Diretoria Demo", filiais: 2, status: "Ativa" },
+  { area: "Diretoria Expansão", diretor: "Diretoria Demo", filiais: 2, status: "Ativa" },
+  { area: "Diretoria Administrativa", diretor: "Diretoria Demo", filiais: 2, status: "Ativa" },
+  { area: "Diretoria Financeira", diretor: "Diretoria Demo", filiais: 2, status: "Ativa" }
 ];
 
 export const catalog = {
-  setores: ["Padaria", "Açougue", "Refrigeração", "Área Externa", "Reforma", "Logística", "Segurança"],
-  projetos: ["Equipamentos Padaria", "Equipamentos Açougue", "Refrigeração 2026", "Reforma Loja", "Área Externa 2026", "Logística"],
-  itens: ["Forno turbo", "Expositor refrigerado", "Serra fita", "Piso operacional", "Calçada", "Empilhadeira"]
+  setores: ["Obras e Reformas", "Manutenção Predial", "Tecnologia e Sistemas", "Segurança Patrimonial", "Climatização", "Operações"],
+  projetos: ["Projeto 001 - Reforma de Loja", "Projeto 002 - Tecnologia e Sistemas", "Projeto 003 - Segurança Patrimonial", "Projeto 004 - Eficiência Energética", "Projeto 005 - Infraestrutura Predial", "Projeto 006 - Padronização Visual", "Projeto 007 - Climatização", "Projeto 008 - Expansão Comercial"],
+  itens: ["Reforma de fachada", "Troca de piso", "Adequação de layout", "Manutenção predial", "Porta automática", "Rede lógica", "Nobreak", "Equipamento de atendimento", "Instalação de câmeras", "Sistema de alarme", "Climatização administrativa", "Expositor refrigerado", "Mobiliário operacional", "Comunicação visual", "Bancada de atendimento", "Adequação elétrica"]
 };
 
 export function brl(value: number) {

@@ -24,6 +24,12 @@ type ItemCatalogo = {
   nome_item: string;
 };
 
+type Usuario = {
+  id: string;
+  perfil: string | null;
+  filial_id: string | null;
+};
+
 type Solicitacao = {
   id: string;
   codigo: string | null;
@@ -50,6 +56,7 @@ export default function Solicitacoes() {
   const [filiais, setFiliais] = useState<Filial[]>([]);
   const [setores, setSetores] = useState<Setor[]>([]);
   const [itens, setItens] = useState<ItemCatalogo[]>([]);
+  const [usuarios, setUsuarios] = useState<Usuario[]>([]);
   const [solicitacoes, setSolicitacoes] = useState<Solicitacao[]>([]);
 
   const [modoFormulario, setModoFormulario] = useState<"nova" | "ajuste" | "">("");
@@ -74,6 +81,7 @@ export default function Solicitacoes() {
 
   const [loading, setLoading] = useState(false);
   const [mensagem, setMensagem] = useState("");
+  const [modalMensagem, setModalMensagem] = useState("");
 
   const detalhe = solicitacoes.find((s) => s.id === detalheId);
 
@@ -189,7 +197,7 @@ export default function Solicitacoes() {
   async function carregarDados() {
     if (!supabase) return;
 
-    const [filiaisResp, setoresResp, itensResp, solicitacoesResp] =
+    const [filiaisResp, setoresResp, itensResp, usuariosResp, solicitacoesResp] =
       await Promise.all([
         supabase
           .from("filiais")
@@ -210,6 +218,11 @@ export default function Solicitacoes() {
           .order("nome_item"),
 
         supabase
+          .from("usuarios")
+          .select("id, perfil, filial_id")
+          .eq("ativo", true),
+
+        supabase
           .from("solicitacoes")
           .select(
             "id, codigo, ano, filial_id, setor_id, item_catalogo_id, prioridade, status, tipo, semestre_sugerido, semestre_aprovado, justificativa, observacao, observacao_diretoria, parecer_patrimonio, foto_url, created_at"
@@ -221,6 +234,7 @@ export default function Solicitacoes() {
     setFiliais(filiaisResp.data ?? []);
     setSetores(setoresResp.data ?? []);
     setItens(itensResp.data ?? []);
+    setUsuarios(usuariosResp.data ?? []);
     setSolicitacoes(solicitacoesResp.data ?? []);
   }
 
@@ -229,6 +243,7 @@ export default function Solicitacoes() {
   }, []);
 
   function limparFormulario() {
+    setModalMensagem("");
     setSolicitacaoEditandoId("");
     setTipo("planejamento_anual");
     setAno("2026");
@@ -310,32 +325,36 @@ export default function Solicitacoes() {
     e.preventDefault();
 
     if (!supabase) {
-      setMensagem("Erro: Supabase não configurado.");
+      setModalMensagem("Erro: Supabase não configurado.");
       return;
     }
 
     if (!filialId || !setorId || !itemId || !justificativa.trim()) {
-      setMensagem("Erro: preencha filial, setor, item e justificativa.");
+      setModalMensagem("Erro: preencha filial, setor, item e justificativa.");
       return;
     }
 
     setLoading(true);
     setMensagem("");
+    setModalMensagem("");
 
     try {
       if (modoFormulario === "nova") {
+        const novoId = crypto.randomUUID();
         const codigo = `SOL-${ano}-${Date.now()}`;
         const fotoUrl = await enviarFoto(codigo);
+        const solicitanteId = obterSolicitanteId(filialId);
 
         const { data, error } = await supabase
           .from("solicitacoes")
           .insert({
+            id: novoId,
             codigo,
             ano: Number(ano),
             filial_id: filialId,
             setor_id: setorId,
             item_catalogo_id: itemId,
-            solicitante_id: null,
+            solicitante_id: solicitanteId,
             tipo,
             prioridade,
             status: "enviada",
@@ -412,10 +431,26 @@ export default function Solicitacoes() {
     } catch (error) {
       const message =
         error instanceof Error ? error.message : "Erro inesperado ao salvar.";
-      setMensagem(`Erro: ${message}`);
+      setModalMensagem(`Erro: ${message}`);
     } finally {
       setLoading(false);
     }
+  }
+
+  function obterSolicitanteId(filialIdAtual: string) {
+    const usuarioDaFilial = usuarios.find((usuario) =>
+      ["solicitante", "gerente", "gerente_loja", "loja"].includes(
+        String(usuario.perfil ?? "").toLowerCase()
+      ) && usuario.filial_id === filialIdAtual
+    );
+
+    const primeiroSolicitante = usuarios.find((usuario) =>
+      ["solicitante", "gerente", "gerente_loja", "loja"].includes(
+        String(usuario.perfil ?? "").toLowerCase()
+      )
+    );
+
+    return usuarioDaFilial?.id ?? primeiroSolicitante?.id ?? null;
   }
 
   function nomeFilial(id: string | null) {
@@ -511,7 +546,7 @@ export default function Solicitacoes() {
           />
         </section>
 
-        {mensagem && (
+        {mensagem && !modoFormulario && !detalhe && (
           <div
             className={
               mensagem.startsWith("Erro") ? "alert-error" : "alert-success"
@@ -710,6 +745,16 @@ export default function Solicitacoes() {
                   ×
                 </button>
               </div>
+
+              {modalMensagem && (
+                <div
+                  className={
+                    modalMensagem.startsWith("Erro") ? "alert-error" : "alert-success"
+                  }
+                >
+                  {modalMensagem}
+                </div>
+              )}
 
               <form onSubmit={enviarSolicitacao}>
                 <div className="form-grid">

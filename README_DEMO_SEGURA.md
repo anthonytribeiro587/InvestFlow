@@ -1,28 +1,22 @@
-# InvestFlow — versão demo segura
+# InvestFlow — demo segura
 
-Esta versão foi ajustada para apresentação com dados fictícios e menor exposição de informação interna.
+A demo está configurada para usar login real pelo Supabase Auth. O seletor de perfil e a entrada sem senha foram removidos.
 
-## O que foi alterado
+## Usuários
 
-- Dashboard passou a exibir uma amostra reduzida: 24 registros carregados e 10 exibidos na tabela.
-- KPIs agora são calculados a partir da amostra demo, não da base completa.
-- Textos do dashboard indicam claramente que é ambiente demonstrativo.
-- Menu "Execução e SAP" foi renomeado para "Evolução futura".
-- Página de execução virou um roadmap, sem prometer integração SAP no MVP.
-- Limites de consultas em telas operacionais foram reduzidos de 300 para 60 registros.
-- `.env.local` foi removido do pacote. Use `.env.example` como modelo.
-- Adicionados headers básicos de segurança no `next.config.js`.
-- Cookie de login recebeu `SameSite=Lax` e `Secure`.
-- Supabase client recebeu configuração explícita de autenticação.
+Use os usuários criados em Authentication > Users. A tabela `public.usuarios` define o perfil e o vínculo de cada conta.
 
-## Variáveis necessárias no Vercel
+Perfis esperados:
 
-```env
-NEXT_PUBLIC_SUPABASE_URL=https://SEU-PROJETO.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=sua_anon_public_key
-NEXT_PUBLIC_DEMO_MODE=true
+```txt
+admin@investflowdemo.com        -> admin / cadastros / visão geral
+solicitante1@investflowdemo.com -> solicitante / criação de solicitações
+diretor1@investflowdemo.com     -> diretoria / aprovação
+patrimonio1@investflowdemo.com  -> patrimônio
+projetos1@investflowdemo.com    -> projetos
+compras1@investflowdemo.com     -> orçamentos, cotações e realizações
 ```
 
-## Observação importante
+## Segurança
 
-Esta versão ainda usa autenticação simplificada por cookie local para proteger rotas no middleware. Para produção real, o ideal é evoluir para autenticação SSR com validação da sessão Supabase no servidor e políticas RLS mais restritivas no banco.
+Esta versão valida `supabase.auth.getUser()` antes de liberar o Shell e remove o bypass demo. Para produção, implemente RLS por perfil e autenticação SSR.

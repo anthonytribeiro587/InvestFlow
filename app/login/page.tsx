@@ -2,7 +2,13 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { getProfileForAuthUser } from "@/lib/auth";
 import { supabase } from "@/lib/supabase";
+
+function cookieOptions() {
+  const secure = typeof window !== "undefined" && window.location.protocol === "https:" ? "; Secure" : "";
+  return `path=/; max-age=28800; SameSite=Lax${secure}`;
+}
 
 export default function LoginPage() {
   const router = useRouter();
@@ -11,33 +17,57 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [erro, setErro] = useState("");
 
+  function gravarSessao(params: { nome: string; perfil: string; email: string }) {
+    const options = cookieOptions();
+    document.cookie = `investflow-auth=true; ${options}`;
+    document.cookie = `investflow-role=${params.perfil}; ${options}`;
+    document.cookie = `investflow-user-name=${encodeURIComponent(params.nome)}; ${options}`;
+    document.cookie = `investflow-user-email=${encodeURIComponent(params.email)}; ${options}`;
+  }
+
   async function entrar(e: React.FormEvent) {
     e.preventDefault();
     setErro("");
 
+    const emailNormalizado = email.trim().toLowerCase();
+
+    if (!emailNormalizado || !password) {
+      setErro("Informe e-mail e senha para entrar.");
+      return;
+    }
+
     if (!supabase) {
-      setErro("Supabase não configurado.");
+      setErro("Supabase não configurado. Confira as variáveis NEXT_PUBLIC_SUPABASE_URL e NEXT_PUBLIC_SUPABASE_ANON_KEY.");
       return;
     }
 
     setLoading(true);
 
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password
-    });
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: emailNormalizado,
+        password,
+      });
 
-    setLoading(false);
+      if (error || !data.user) {
+        setErro("E-mail ou senha inválidos.");
+        return;
+      }
 
-    if (error) {
-      setErro("E-mail ou senha inválidos.");
-      return;
+      const perfil = await getProfileForAuthUser(supabase, data.user);
+
+      if (!perfil) {
+        await supabase.auth.signOut();
+        setErro("Usuário autenticado, mas sem perfil ativo no cadastro do InvestFlow.");
+        return;
+      }
+
+      gravarSessao({ nome: perfil.nome, perfil: perfil.perfil, email: perfil.email });
+      router.push("/dashboard");
+      router.refresh();
+    } finally {
+      setLoading(false);
     }
-
-    document.cookie = "investflow-auth=true; path=/; max-age=28800; SameSite=Lax; Secure";
-
-    router.push("/dashboard");
-    router.refresh();
   }
 
   return (
@@ -52,15 +82,19 @@ export default function LoginPage() {
           </div>
         </div>
 
-        <h1>Login administrativo</h1>
-        <p>Ambiente demonstrativo com dados fictícios. Não utilize dados reais nesta versão.</p>
+        <h1>Acesso ao InvestFlow</h1>
+        <p>
+          Entre com o usuário cadastrado no Supabase Auth. Cada conta carrega apenas o fluxo permitido para o perfil.
+        </p>
 
         <form onSubmit={entrar} className="login-form">
           <label>
             E-mail
             <input
+              type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              autoComplete="email"
             />
           </label>
 
@@ -70,13 +104,15 @@ export default function LoginPage() {
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              placeholder="Digite a senha do Supabase Auth"
+              autoComplete="current-password"
             />
           </label>
 
           {erro && <p className="error-text">{erro}</p>}
 
           <button type="submit" disabled={loading}>
-            {loading ? "Entrando..." : "Entrar"}
+            {loading ? "Entrando..." : "Entrar no sistema"}
           </button>
         </form>
       </section>
