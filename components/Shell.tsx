@@ -136,6 +136,10 @@ export function Shell({
     return cadastros;
   }, [perfil]);
 
+  const linksMobile = useMemo(() => {
+    return [...linksOperacionais, ...linksCadastros];
+  }, [linksOperacionais, linksCadastros]);
+
   async function sair() {
     if (supabase) {
       await supabase.auth.signOut();
@@ -238,6 +242,20 @@ export function Shell({
 
         {children}
       </main>
+
+      <nav className="mobile-bottom-nav" aria-label="Navegação principal">
+        {[...linksOperacionais, ...linksCadastros].map(([href, Icon, label]) => (
+          <Link
+            href={href}
+            key={`mobile-${href}`}
+            className={isActive(href) ? "mobile-nav-item active" : "mobile-nav-item"}
+            title={label}
+          >
+            <Icon size={20} />
+            <span>{label}</span>
+          </Link>
+        ))}
+      </nav>
     </div>
   );
 }
