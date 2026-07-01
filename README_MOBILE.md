@@ -1,25 +1,23 @@
-# Ajuste mobile InvestFlow
+# Ajuste mobile InvestFlow - versão 2
 
-Versão ajustada para apresentação em celular.
+Nesta versão o mobile mantém as tabelas no padrão desktop, com scroll horizontal dentro do card.
 
-## O que mudou
+## Ajustes aplicados
 
-- Sidebar do desktop fica oculta no mobile.
-- Navegação mobile virou uma barra fixa inferior, estilo app/rede social.
-- Conteúdo passa a ocupar 100% da tela no celular.
-- Topo ficou compacto e fixo.
-- Cards/KPIs foram ajustados para duas colunas no mobile.
-- Modais viram tela cheia no celular, evitando corte de formulário.
-- Tabelas viram cards no mobile, evitando scroll lateral quebrado.
-- Formulários ficam em uma coluna no mobile.
-- Mantido desktop como estava.
+- Sidebar segue oculta no mobile.
+- Navegação inferior fixa estilo app.
+- Conteúdo centralizado e ocupando 100% da tela.
+- Tabelas voltaram ao formato tradicional, sem virar cards tortos.
+- Tabelas usam scroll horizontal interno.
+- KPIs no mobile ficam em uma coluna para não esmagar números.
+- Modais continuam em tela cheia no celular.
+- Desktop foi mantido.
 
-## Arquivos principais alterados
+## Arquivos alterados
 
 - `components/Shell.tsx`
 - `app/globals.css`
 
-## Importante
+## Deploy
 
-As variáveis reais do Supabase devem ficar apenas no Vercel, em Environment Variables.
-Use `.env.example` apenas como modelo.
+Suba o conteúdo no GitHub e mantenha as variáveis do Supabase apenas no Vercel.

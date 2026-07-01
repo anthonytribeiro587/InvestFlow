@@ -2704,3 +2704,278 @@ textarea {
     align-self: center;
   }
 }
+
+
+/* =========================================================
+   MOBILE AJUSTE 2 - Tabelas iguais ao desktop
+   Remove o modo "card por linha" e usa tabela com scroll horizontal.
+   ========================================================= */
+@media (max-width: 900px) {
+  .content {
+    padding-left: 14px !important;
+    padding-right: 14px !important;
+    padding-bottom: 112px !important;
+  }
+
+  .panel,
+  .request-list,
+  .request-form {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+
+  .dashboard-grid,
+  .two-col,
+  .report-content-grid {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  /* Mantém tabela padrão e usa scroll interno */
+  .request-table-limited,
+  .table-scroll.limited,
+  .report-table-wrap,
+  .table-wrap,
+  .projetos-table,
+  .orcamentos-table,
+  .compact-dashboard-table {
+    display: block !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow-x: auto !important;
+    overflow-y: auto !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 16px !important;
+    background: #ffffff !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+
+  .request-table-limited,
+  .table-scroll.limited {
+    max-height: 430px !important;
+  }
+
+  .report-table-wrap,
+  .table-wrap {
+    max-height: none !important;
+  }
+
+  .request-table-limited table,
+  .table-scroll.limited table,
+  .report-table-wrap table,
+  .table-wrap table,
+  .projetos-table table,
+  .orcamentos-table table,
+  .compact-dashboard-table table {
+    display: table !important;
+    width: 100% !important;
+    min-width: 760px !important;
+    table-layout: auto !important;
+    border-collapse: collapse !important;
+    border-spacing: 0 !important;
+  }
+
+  .compact-dashboard-table table {
+    min-width: 820px !important;
+  }
+
+  .request-table-limited thead,
+  .table-scroll.limited thead,
+  .report-table-wrap thead,
+  .table-wrap thead {
+    display: table-header-group !important;
+  }
+
+  .request-table-limited tbody,
+  .table-scroll.limited tbody,
+  .report-table-wrap tbody,
+  .table-wrap tbody {
+    display: table-row-group !important;
+  }
+
+  .request-table-limited tr,
+  .table-scroll.limited tr,
+  .report-table-wrap tr,
+  .table-wrap tr {
+    display: table-row !important;
+    background: transparent !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+  }
+
+  .request-table-limited th,
+  .request-table-limited td,
+  .table-scroll.limited th,
+  .table-scroll.limited td,
+  .report-table-wrap th,
+  .report-table-wrap td,
+  .table-wrap th,
+  .table-wrap td {
+    display: table-cell !important;
+    width: auto !important;
+    max-width: none !important;
+    min-width: 0 !important;
+    padding: 11px 12px !important;
+    border-bottom: 1px solid #e2e8f0 !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    vertical-align: middle !important;
+    font-size: 12px !important;
+    line-height: 1.25 !important;
+    text-align: left !important;
+  }
+
+  .request-table-limited th,
+  .table-scroll.limited th,
+  .report-table-wrap th,
+  .table-wrap th {
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 3 !important;
+    background: #ffffff !important;
+    color: #64748b !important;
+    font-size: 11px !important;
+    font-weight: 900 !important;
+    text-transform: none !important;
+  }
+
+  .request-table-limited td::before,
+  .table-scroll.limited td::before,
+  .report-table-wrap td::before,
+  .table-wrap td::before,
+  td[colspan]::before {
+    content: none !important;
+    display: none !important;
+  }
+
+  td[colspan] {
+    display: table-cell !important;
+    text-align: center !important;
+  }
+
+  .request-table-limited td + td,
+  .table-scroll.limited td + td,
+  .report-table-wrap td + td,
+  .table-wrap td + td {
+    border-top: 0 !important;
+  }
+
+  /* Larguras mínimas para não esmagar textos */
+  .request-table-limited th,
+  .request-table-limited td {
+    min-width: 110px !important;
+  }
+
+  .request-table-limited th:first-child,
+  .request-table-limited td:first-child {
+    min-width: 46px !important;
+  }
+
+  .request-table-limited th:last-child,
+  .request-table-limited td:last-child {
+    min-width: 190px !important;
+  }
+
+  .compact-dashboard-table th,
+  .compact-dashboard-table td {
+    min-width: 95px !important;
+  }
+
+  .report-table-wrap th,
+  .report-table-wrap td,
+  .table-wrap th,
+  .table-wrap td {
+    min-width: 130px !important;
+  }
+
+  .action-row {
+    width: auto !important;
+    display: flex !important;
+    justify-content: flex-start !important;
+    align-items: center !important;
+    gap: 6px !important;
+    flex-wrap: nowrap !important;
+    overflow: visible !important;
+  }
+
+  .mini-button {
+    min-height: 30px !important;
+    padding: 6px 8px !important;
+    border-radius: 9px !important;
+    font-size: 10.5px !important;
+    white-space: nowrap !important;
+  }
+
+  .status {
+    white-space: nowrap !important;
+    text-align: center !important;
+    font-size: 11px !important;
+    padding: 6px 9px !important;
+  }
+
+  /* Topo mais limpo no celular */
+  .topbar {
+    border-radius: 0 0 18px 18px !important;
+  }
+
+  .kpi-grid,
+  .compact-report-kpis {
+    grid-template-columns: 1fr !important;
+  }
+
+  .kpi-card,
+  .report-kpi {
+    min-height: 92px !important;
+  }
+
+  /* Barra inferior mais centralizada e menos alta */
+  .mobile-bottom-nav {
+    left: 14px !important;
+    right: 14px !important;
+    bottom: max(12px, env(safe-area-inset-bottom)) !important;
+    max-width: 560px !important;
+    margin: 0 auto !important;
+    border-radius: 22px !important;
+    padding: 7px !important;
+  }
+
+  .mobile-nav-item {
+    flex: 0 0 66px !important;
+    min-height: 54px !important;
+    border-radius: 16px !important;
+    font-size: 9.5px !important;
+  }
+
+  .mobile-nav-item span {
+    max-width: 60px !important;
+  }
+}
+
+@media (max-width: 430px) {
+  .content {
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+  }
+
+  .panel {
+    padding: 14px !important;
+  }
+
+  .mobile-bottom-nav {
+    left: 10px !important;
+    right: 10px !important;
+  }
+
+  .mobile-nav-item {
+    flex-basis: 62px !important;
+  }
+
+  .mobile-nav-item span {
+    max-width: 56px !important;
+  }
+}
