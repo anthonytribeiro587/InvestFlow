@@ -1,23 +1,15 @@
-# Ajuste mobile InvestFlow - versão 2
+# Ajuste mobile InvestFlow - versão alinhada
 
-Nesta versão o mobile mantém as tabelas no padrão desktop, com scroll horizontal dentro do card.
+## O que foi corrigido
 
-## Ajustes aplicados
-
-- Sidebar segue oculta no mobile.
-- Navegação inferior fixa estilo app.
-- Conteúdo centralizado e ocupando 100% da tela.
-- Tabelas voltaram ao formato tradicional, sem virar cards tortos.
-- Tabelas usam scroll horizontal interno.
-- KPIs no mobile ficam em uma coluna para não esmagar números.
-- Modais continuam em tela cheia no celular.
-- Desktop foi mantido.
+- Cabeçalho mobile agora fica alinhado com os cards.
+- Removida a faixa arredondada que deixava cada tela com sensação de desalinhamento.
+- Ambiente demo e usuário ficam em uma linha alinhada.
+- KPIs e painéis usam a mesma largura.
+- Barra inferior fica centralizada com a largura do conteúdo.
+- Tabelas seguem no formato desktop com scroll horizontal interno.
 
 ## Arquivos alterados
 
 - `components/Shell.tsx`
 - `app/globals.css`
-
-## Deploy
-
-Suba o conteúdo no GitHub e mantenha as variáveis do Supabase apenas no Vercel.
