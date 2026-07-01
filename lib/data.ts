@@ -1,256 +1,51 @@
-import { unstable_noStore as noStore } from "next/cache";
-import { getSupabaseAdmin } from "./supabase-admin";
-import { ensureDefaultPipeline } from "./default-pipeline";
-import {
-  activities as mockActivities,
-  contacts as mockContacts,
-  deals as mockDeals,
-  messages as mockMessages,
-  serviceOrders as mockServiceOrders,
-  stages as mockStages,
-} from "./mock-data";
-import type { Activity, Contact, Deal, Message, ServiceOrder, Stage } from "./types";
+export type Status = "Em orçamento" | "Comprado" | "Em obra" | "Realizado" | "Cancelado" | "Transferido";
+export type Priority = "Baixa" | "Média" | "Alta" | "Crítica";
 
-export type CrmData = {
-  contacts: Contact[];
-  deals: Deal[];
-  stages: Stage[];
-  messages: Message[];
-  activities: Activity[];
-  serviceOrders: ServiceOrder[];
-  isDemo: boolean;
-  error?: string;
-  serviceOrdersReady?: boolean;
-  serviceOrdersError?: string;
+export const investments = [
+  { ano: 2026, semestre: "1º Semestre", filial: "Filial 01", diretor: "Diretor A", setor: "Padaria", projeto: "Equipamentos Padaria", item: "Forno turbo", quantidade: 1, valorUnitario: 120000, total: 120000, realizado: 120000, fornecedor: "Fornecedor Modelo A", situacao: "Realizado" as Status, sap: "SAP-001", pedido: "450001" },
+  { ano: 2026, semestre: "1º Semestre", filial: "Filial 02", diretor: "Diretor B", setor: "Refrigeração", projeto: "Refrigeração 2026", item: "Expositor refrigerado", quantidade: 2, valorUnitario: 80000, total: 160000, realizado: 0, fornecedor: "Fornecedor Modelo B", situacao: "Comprado" as Status, sap: "", pedido: "" },
+  { ano: 2026, semestre: "2º Semestre", filial: "Filial 03", diretor: "Diretor A", setor: "Açougue", projeto: "Equipamentos Açougue", item: "Serra fita", quantidade: 1, valorUnitario: 45000, total: 45000, realizado: 0, fornecedor: "Em cotação", situacao: "Em orçamento" as Status, sap: "", pedido: "" },
+  { ano: 2026, semestre: "2º Semestre", filial: "Filial 04", diretor: "Diretor C", setor: "Reforma", projeto: "Reforma Loja 04", item: "Piso operacional", quantidade: 1, valorUnitario: 280000, total: 280000, realizado: 0, fornecedor: "Obra Modelo", situacao: "Em obra" as Status, sap: "", pedido: "" },
+  { ano: 2026, semestre: "1º Semestre", filial: "Filial 05", diretor: "Diretor B", setor: "Área Externa", projeto: "Área Externa 2026", item: "Calçada", quantidade: 1, valorUnitario: 35000, total: 35000, realizado: 0, fornecedor: "-", situacao: "Transferido" as Status, sap: "", pedido: "" }
+];
+
+export const requests = [
+  { id: "#154", tipo: "Planejamento anual", filial: "Filial 01", diretor: "Diretor A", setor: "Padaria", item: "Forno turbo", prioridade: "Alta" as Priority, semestre: "1º Semestre", status: "Aprovada diretoria", obs: "Enviar fotos do equipamento atual.", descricao: "Equipamento atual com falhas e impacto na produção." },
+  { id: "#153", tipo: "Planejamento anual", filial: "Filial 02", diretor: "Diretor B", setor: "Refrigeração", item: "Expositor refrigerado", prioridade: "Crítica" as Priority, semestre: "1º Semestre", status: "Aprovado investimento", obs: "Validar se entra em compra conjunta.", descricao: "Risco de perda operacional no setor." },
+  { id: "#152", tipo: "Extraordinária", filial: "Filial 03", diretor: "Diretor A", setor: "Açougue", item: "Serra fita", prioridade: "Média" as Priority, semestre: "2º Semestre", status: "Em orçamento", obs: "Demanda aberta fora do ciclo anual.", descricao: "Substituição por desgaste do equipamento." },
+  { id: "#151", tipo: "Planejamento anual", filial: "Filial 04", diretor: "Diretor C", setor: "Área Externa", item: "Pintura de fachada", prioridade: "Baixa" as Priority, semestre: "Não definido", status: "Ajuste solicitado", obs: "Diretoria solicitou revisão.", descricao: "Melhoria visual e padronização da unidade." }
+];
+
+export const filiais = [
+  { codigo: "U001", filial: "Unidade 01 — Centro", area: "Diretoria Operacional", diretor: "Diretor Operacional", gerente: "Solicitante Loja 01", cidade: "Metropolitana" },
+  { codigo: "U002", filial: "Unidade 02 — Norte", area: "Diretoria Operacional", diretor: "Diretor Operacional", gerente: "Solicitante Loja 02", cidade: "Metropolitana" },
+  { codigo: "U003", filial: "Unidade 03 — Sul", area: "Diretoria Expansão", diretor: "Diretor Expansão", gerente: "Solicitante Loja 03", cidade: "Metropolitana" },
+  { codigo: "U004", filial: "Unidade 04 — Vale", area: "Diretoria Expansão", diretor: "Diretor Expansão", gerente: "Solicitante Loja 04", cidade: "Interior" },
+  { codigo: "U005", filial: "Unidade 05 — Litoral", area: "Diretoria Administrativa", diretor: "Diretor Administrativo", gerente: "Solicitante Loja 05", cidade: "Litoral" },
+  { codigo: "U006", filial: "Unidade 06 — Serra", area: "Diretoria Administrativa", diretor: "Diretor Administrativo", gerente: "Solicitante Loja 06", cidade: "Interior" },
+  { codigo: "U007", filial: "Unidade 07 — Industrial", area: "Diretoria Financeira", diretor: "Diretor Financeiro", gerente: "Solicitante Loja 07", cidade: "Metropolitana" },
+  { codigo: "U008", filial: "Unidade 08 — Comercial", area: "Diretoria Financeira", diretor: "Diretor Financeiro", gerente: "Solicitante Loja 08", cidade: "Interior" }
+];
+
+export const diretorias = [
+  { area: "Diretoria Operacional", diretor: "Diretor Operacional", filiais: 2, status: "Ativa" },
+  { area: "Diretoria Expansão", diretor: "Diretor Expansão", filiais: 2, status: "Ativa" },
+  { area: "Diretoria Administrativa", diretor: "Diretor Administrativo", filiais: 2, status: "Ativa" },
+  { area: "Diretoria Financeira", diretor: "Diretor Financeiro", filiais: 2, status: "Ativa" }
+];
+
+export const catalog = {
+  setores: ["Obras e Reformas", "Manutenção Predial", "Tecnologia e Sistemas", "Segurança Patrimonial", "Climatização", "Operações"],
+  projetos: ["Projeto 001 - Reforma de Loja", "Projeto 002 - Tecnologia e Sistemas", "Projeto 003 - Segurança Patrimonial", "Projeto 004 - Eficiência Energética", "Projeto 005 - Infraestrutura Predial", "Projeto 006 - Padronização Visual", "Projeto 007 - Climatização", "Projeto 008 - Expansão Comercial"],
+  itens: ["Reforma de fachada", "Troca de piso", "Adequação de layout", "Manutenção predial", "Porta automática", "Rede lógica", "Nobreak", "Equipamento de atendimento", "Instalação de câmeras", "Sistema de alarme", "Climatização administrativa", "Expositor refrigerado", "Mobiliário operacional", "Comunicação visual", "Bancada de atendimento", "Adequação elétrica"]
 };
 
-const emptyData: CrmData = {
-  contacts: [],
-  deals: [],
-  stages: mockStages,
-  messages: [],
-  activities: [],
-  serviceOrders: [],
-  isDemo: false,
-  serviceOrdersReady: true,
-};
-
-function fallbackData(error?: string): CrmData {
-  return {
-    contacts: mockContacts,
-    deals: mockDeals,
-    stages: mockStages,
-    messages: mockMessages,
-    activities: mockActivities,
-    serviceOrders: mockServiceOrders,
-    isDemo: true,
-    error,
-    serviceOrdersReady: true,
-  };
+export function brl(value: number) {
+  return new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 }).format(value);
 }
 
-
-function firstString(...values: any[]) {
-  for (const value of values) {
-    if (typeof value === "string" && value.trim()) return value.trim();
-  }
-  return undefined;
-}
-
-function extractMediaUrl(raw: any): string | undefined {
-  if (!raw) return undefined;
-  const msg = raw?.message || raw?.data?.message || raw;
-
-  // Só consideramos URLs já resolvidas/salvas pelo CRM. URLs internas do WhatsApp
-  // (ex.: audioMessage.url) normalmente exigem descriptografia e resultam em player 0:00.
-  const direct = firstString(
-    raw?.mediaUrl,
-    raw?.media_url,
-    raw?.fileUrl,
-    raw?.file_url,
-    raw?.resolvedMediaUrl,
-    raw?.downloadUrl
-  );
-  if (direct) return direct;
-
-  const base64 = firstString(raw?.base64, raw?.mediaBase64, raw?.media_base64, msg?.base64);
-  const mime = firstString(
-    raw?.mimetype,
-    raw?.mimeType,
-    msg?.imageMessage?.mimetype,
-    msg?.videoMessage?.mimetype,
-    msg?.audioMessage?.mimetype,
-    msg?.documentMessage?.mimetype
-  );
-  if (base64 && mime) {
-    const cleanMime = String(mime).replace(/;\s*/g, ";");
-    return String(base64).startsWith("data:") ? String(base64) : `data:${cleanMime};base64,${base64}`;
-  }
-  return undefined;
-}
-
-function extractFileName(raw: any): string | undefined {
-  const msg = raw?.message || raw?.data?.message || raw;
-  return firstString(raw?.fileName, raw?.filename, msg?.documentMessage?.fileName, msg?.document?.fileName);
-}
-
-function normalizeTags(tags: unknown): string[] {
-  if (Array.isArray(tags)) return tags.map(String).filter(Boolean);
-  return [];
-}
-
-function mapServiceOrder(row: any): ServiceOrder {
-  return {
-    id: row.id,
-    contactId: row.contact_id,
-    dealId: row.deal_id || undefined,
-    code: row.code || "OS",
-    title: row.title || "Ordem de serviço",
-    description: row.description || undefined,
-    status: row.status || "aberta",
-    priority: row.priority || "morno",
-    owner: row.owner || "NextLead",
-    estimatedValue: Number(row.estimated_value || 0),
-    finalValue: Number(row.final_value || 0),
-    dueAt: row.due_at || undefined,
-    startedAt: row.started_at || undefined,
-    completedAt: row.completed_at || undefined,
-    internalNotes: row.internal_notes || undefined,
-    createdAt: row.created_at || new Date().toISOString(),
-    updatedAt: row.updated_at || row.created_at || new Date().toISOString(),
-  };
-}
-
-export async function getCrmData(): Promise<CrmData> {
-  noStore();
-
-  const supabase = getSupabaseAdmin();
-  if (!supabase) return fallbackData("Variáveis do Supabase ausentes na Vercel.");
-
-  await ensureDefaultPipeline(supabase);
-
-  const stagesPromise = supabase.from("pipeline_stages").select("id,title,position,color").order("position", { ascending: true });
-  const dealsPromise = supabase.from("deals").select("id,contact_id,stage_id,title,value,status,expected_close,lost_reason,created_at").order("created_at", { ascending: false }).limit(200);
-  let messagesPromise: any = supabase.from("messages").select("id,contact_id,direction,body,type,status,provider_message_id,raw_payload,created_at").order("created_at", { ascending: true }).limit(500);
-  const activitiesPromise = supabase.from("activities").select("id,contact_id,title,due_at,done").order("due_at", { ascending: true }).limit(300);
-  const serviceOrdersPromise = supabase
-    .from("service_orders")
-    .select("id,contact_id,deal_id,code,title,description,status,priority,owner,estimated_value,final_value,due_at,started_at,completed_at,internal_notes,created_at,updated_at")
-    .order("created_at", { ascending: false })
-    .limit(300);
-
-  // Tipamos como any porque fazemos fallback de select com/sem a coluna owner.
-  let contactsResult: any = await supabase
-    .from("contacts")
-    .select("id,name,phone,email,company,source,owner,temperature,tags,notes,last_message_at,created_at")
-    .order("created_at", { ascending: false })
-    .limit(300);
-
-  let hasOwnerColumn = true;
-  if (contactsResult.error?.message.toLowerCase().includes("owner")) {
-    hasOwnerColumn = false;
-    contactsResult = await supabase
-      .from("contacts")
-      .select("id,name,phone,email,company,source,temperature,tags,notes,last_message_at,created_at")
-      .order("created_at", { ascending: false })
-      .limit(300);
-  }
-
-  const [stagesResult, dealsResult, messagesResult, activitiesResult, serviceOrdersResult] = await Promise.all([
-    stagesPromise,
-    dealsPromise,
-    messagesPromise,
-    activitiesPromise,
-    serviceOrdersPromise,
-  ]);
-
-  const serviceOrdersMissing = Boolean(
-    serviceOrdersResult.error?.message?.toLowerCase().includes("service_orders") ||
-      serviceOrdersResult.error?.message?.toLowerCase().includes("does not exist") ||
-      serviceOrdersResult.error?.code === "42P01",
-  );
-
-  const errors = [
-    stagesResult.error?.message,
-    contactsResult.error?.message,
-    dealsResult.error?.message,
-    messagesResult.error?.message,
-    activitiesResult.error?.message,
-    serviceOrdersMissing ? undefined : serviceOrdersResult.error?.message,
-  ].filter(Boolean);
-
-  if (errors.length) {
-    console.error("Erro ao buscar dados do Supabase", errors);
-    return fallbackData(errors.join(" | "));
-  }
-
-  const stages: Stage[] = (stagesResult.data || []).map((stage: any) => ({
-    id: stage.id,
-    title: stage.title,
-    order: stage.position,
-    color: stage.color || "#4f8cff",
-  }));
-
-  const contacts: Contact[] = (contactsResult.data || []).map((contact: any) => ({
-    id: contact.id,
-    name: contact.name,
-    phone: contact.phone,
-    email: contact.email || undefined,
-    company: contact.company || undefined,
-    source: contact.source || "Manual",
-    owner: hasOwnerColumn ? contact.owner || "NextLead" : "NextLead",
-    temperature: contact.temperature || "morno",
-    tags: normalizeTags(contact.tags),
-    lastMessageAt: contact.last_message_at || contact.created_at || new Date().toISOString(),
-    notes: contact.notes || undefined,
-  }));
-
-  const deals: Deal[] = (dealsResult.data || []).map((deal: any) => ({
-    id: deal.id,
-    contactId: deal.contact_id,
-    title: deal.title,
-    value: Number(deal.value || 0),
-    stageId: deal.stage_id || stages[0]?.id || "",
-    status: deal.status || "aberto",
-    expectedClose: deal.expected_close || undefined,
-    lostReason: deal.lost_reason || undefined,
-    createdAt: deal.created_at || new Date().toISOString(),
-  }));
-
-  const messages: Message[] = (messagesResult.data || []).map((message: any) => ({
-    id: message.id,
-    contactId: message.contact_id,
-    direction: message.direction,
-    body: message.body,
-    status: message.status || "queued",
-    providerMessageId: message.provider_message_id || undefined,
-    type: message.type || "text",
-    mediaUrl: extractMediaUrl(message.raw_payload),
-    fileName: extractFileName(message.raw_payload),
-    rawPayload: message.raw_payload || undefined,
-    createdAt: message.created_at || new Date().toISOString(),
-  }));
-
-  const activities: Activity[] = (activitiesResult.data || []).map((activity: any) => ({
-    id: activity.id,
-    contactId: activity.contact_id,
-    title: activity.title,
-    dueAt: activity.due_at || new Date().toISOString(),
-    done: Boolean(activity.done),
-  }));
-
-  const serviceOrders: ServiceOrder[] = serviceOrdersMissing ? [] : (serviceOrdersResult.data || []).map(mapServiceOrder);
-
-  return {
-    ...emptyData,
-    stages: stages.length ? stages : mockStages,
-    contacts,
-    deals,
-    messages,
-    activities,
-    serviceOrders,
-    serviceOrdersReady: !serviceOrdersMissing,
-    serviceOrdersError: serviceOrdersMissing ? "Tabela service_orders ainda não existe. Rode scripts/migration-v3-service-orders.sql no Supabase." : undefined,
-    isDemo: false,
-  };
+export function totals() {
+  const total = investments.reduce((sum, item) => sum + item.total, 0);
+  const realizado = investments.reduce((sum, item) => sum + item.realizado, 0);
+  return { total, realizado, saldo: total - realizado, execucao: total ? Math.round((realizado / total) * 100) : 0 };
 }
